@@ -62,9 +62,9 @@ npm run dev
 
 ## 📸 미리보기
 
-| 메인 화면 | 폴더 선택 |
+
 |-----------|-----------|
-| ![Main](/Users/kangjaewan/code/seeq_quiz/project/public/main.png) | ![Mascot](./public/quizmate----1.png) |
+| ![Main](public/main.png) | ![Mascot](public/folder.png) |
 
 ---
 
