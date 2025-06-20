@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "/Users/kangjaewan/code/seeq_quiz/project/src/components/ui/button.tsx";
+import { Button } from "../../../../components/ui/button";
 
 interface QuizStartScreenProps {
   onStart: () => void;

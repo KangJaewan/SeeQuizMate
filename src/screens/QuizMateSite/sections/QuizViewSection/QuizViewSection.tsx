@@ -2,7 +2,7 @@ import { MoreHorizontalIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Card, CardContent } from "../../../../components/ui/card";
-import Quizpopup from "/Users/kangjaewan/code/seeq_quiz/project/src/components/Popup/Quizpopup.tsx"; // 경로 맞게 조정
+import Quizpopup from "../../../../components/Popup/Quizpopup";
 
 interface QuizRecord {
   session_id: string;

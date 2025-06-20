@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
-import QuizChoiceMultiple from "/Users/kangjaewan/code/seeq_quiz/project/src/screens/QuizMateSite/sections/QuizListSection/QuizCard/QuizChoiceMultiple.tsx";
-import QuizChoiceTrueFalse from "/Users/kangjaewan/code/seeq_quiz/project/src/screens/QuizMateSite/sections/QuizListSection/QuizCard/QuizChoiceTrueFalse.tsx";
-import QuizChoiceShortAnswer from "/Users/kangjaewan/code/seeq_quiz/project/src/screens/QuizMateSite/sections/QuizListSection/QuizCard/QuizChoiceShortAnswer.tsx";
-import { Button } from "/Users/kangjaewan/code/seeq_quiz/project/src/components/ui/button.tsx";
+import QuizChoiceMultiple from "./QuizCard/QuizChoiceMultiple";
+import QuizChoiceTrueFalse from "./QuizCard/QuizChoiceTrueFalse";
+import QuizChoiceShortAnswer from "./QuizCard/QuizChoiceShortAnswer";
+import { Button } from "../../../../components/ui/button";
 
 interface QuizSolveScreenProps {
   quizList: any[];
