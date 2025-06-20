@@ -1,5 +1,4 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import FolderPopup from "../../components/Popup/FolderPopup";
 import { Card, CardContent } from "../../components/ui/card";
 import { QuizListSection } from "./sections/QuizListSection";
@@ -9,6 +8,21 @@ import { QuizViewSection } from "./sections/QuizViewSection";
 export const QuizMateSite = (): JSX.Element => {
   const [folderId, setFolderId] = useState<string | null>(null);
   const [showPopup, setShowPopup] = useState(true);
+  const [messageIndex, setMessageIndex] = useState(0);
+
+  const messages = [
+    "자, 준비됐나요? 뇌를 깨우는 시간이에요! 🧠✨",
+    "오늘도 퀴즈로 똑똑해지는 하루! 📘",
+    "몰입의 시간! 지금 집중해볼까요? 💡",
+    "내일의 나를 위한 10분 투자! ⏱️",
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMessageIndex((prev) => (prev + 1) % messages.length);
+    }, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleFolderSelect = (id: string) => {
     setFolderId(id);
@@ -31,13 +45,13 @@ export const QuizMateSite = (): JSX.Element => {
               src="/image-43.png"
             />
             <div className="inline-flex flex-col items-start gap-0.5">
-              <h1 className="font-bold text-indigo-600 text-2xl leading-[28.8px] whitespace-nowrap [font-family:'Inter',Helvetica] tracking-[0]">
+              <h1 className="font-bold text-indigo-600 text-4xl leading-[38px] whitespace-nowrap [font-family:'Inter',Helvetica] tracking-[0]">
                 Quiz Mate
               </h1>
             </div>
           </div>
         </header>
-
+ 
         {/* Main Content Grid */}
         <div className="grid grid-cols-12 gap-6 pt-24 px-6 pb-40">
           {/* Quiz Selection Section - Left Column */}
@@ -51,22 +65,21 @@ export const QuizMateSite = (): JSX.Element => {
           </div>
 
           {/* Quiz View Section - Right Column */}
-          <div className="col-span-3">
+          <div className="col-span-3 min-h-[800px]">
             <QuizViewSection />
           </div>
         </div>
 
-        {/* Mascot and Chat Bubble - Bottom Left */}
-        <div className="absolute bottom-5 left-5 flex items-end z-10">
-          <Card className="w-64 h-[90px] bg-white rounded-[20px_20px_20px_4px] border-[3px] border-solid border-indigo-600">
-            <CardContent className="p-4">
-              <p className="[font-family:'Inter',Helvetica] font-normal text-black text-base tracking-[0] leading-[20px]">
-                자, 준비됐나요? <br />
-                뇌를 깨우는 시간이에요! 🧠✨
+        {/* Mascot and Chat Bubble - Bottom Center */}
+        <div className="absolute bottom-96 left-1/2 transform -translate-x-1/2 flex items-end z-10 gap-4">
+          <Card className="w-80 h-[120px] bg-white rounded-[20px_20px_20px_4px] border-[3px] border-solid border-indigo-600 shadow-lg flex items-center justify-center">
+            <CardContent className="p-5 text-center">
+              <p className="[font-family:'Inter',Helvetica] font-semibold text-black text-lg tracking-[0] leading-[24px]">
+                {messages[messageIndex]}
               </p>
             </CardContent>
           </Card>
-          <div className="w-[100px] h-[100px] bg-[url(/quizmate----1.png)] bg-cover bg-[50%_50%] animate-[rotatefloat_4s_ease-in-out_infinite]" />
+          <div className="w-[120px] h-[120px] bg-[url(/quizmate----1.png)] bg-cover bg-[50%_50%] animate-[rotatefloat_4s_ease-in-out_infinite]" />
         </div>
       </div>
     </main>

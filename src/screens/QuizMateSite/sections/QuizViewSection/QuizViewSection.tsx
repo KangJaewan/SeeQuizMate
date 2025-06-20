@@ -2,6 +2,7 @@ import { MoreHorizontalIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Card, CardContent } from "../../../../components/ui/card";
+import Quizpopup from "/Users/kangjaewan/code/seeq_quiz/project/src/components/Popup/Quizpopup.tsx"; // 경로 맞게 조정
 
 interface QuizRecord {
   session_id: string;
@@ -15,11 +16,39 @@ interface QuizRecord {
   submitted_at: string;
 }
 
+interface QuizSubmission {
+  question_id: string;
+  question_text: string;
+  quiz_type: string;
+  user_answer: string;
+  correct_answer: string;
+  is_correct: boolean;
+  score: number;
+  options?: string[] | null;
+  time_spent?: number | null;
+  question_order: number;
+  created_at: string;
+}
+
 export const QuizViewSection = (): JSX.Element => {
   const [quizHistoryData, setQuizHistoryData] = useState<QuizRecord[]>([]);
   const [offset, setOffset] = useState(0);
   const [loading, setLoading] = useState(false);
   const limit = 10;
+
+  const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
+  const [quizDetails, setQuizDetails] = useState<QuizSubmission[] | null>(null);
+  const [showPopup, setShowPopup] = useState(false);
+
+  const fetchQuizDetails = async (sessionId: string) => {
+    try {
+      const res = await axios.get(`http://localhost:8000/quiz-qa/sessions/${sessionId}/details`);
+      setQuizDetails(res.data);
+      setShowPopup(true);
+    } catch (error) {
+      console.error("퀴즈 세션 상세 내역 조회 실패:", error);
+    }
+  };
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -71,6 +100,7 @@ export const QuizViewSection = (): JSX.Element => {
           <div
             key={quiz.session_id}
             className="w-full bg-gray-50 rounded-md p-3 relative"
+            onClick={() => fetchQuizDetails(quiz.session_id)}
           >
             <div className="flex">
               <img
@@ -99,6 +129,15 @@ export const QuizViewSection = (): JSX.Element => {
           </div>
         ))}
       </CardContent>
+      {showPopup && quizDetails && (
+        <Quizpopup
+          quizResults={quizDetails}
+          onClose={() => {
+            setShowPopup(false);
+            setQuizDetails(null);
+          }}
+        />
+      )}
     </Card>
   );
 };

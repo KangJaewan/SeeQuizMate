@@ -289,21 +289,22 @@ async def submit_quiz(submission: QuizSubmission):
         logger.error(f"퀴즈 제출 처리 실패: {e}")
         raise HTTPException(status_code=500, detail=f"퀴즈 제출 처리 중 오류가 발생했습니다: {str(e)}")
 
+
 @router.get("/sessions/{session_id}", response_model=QuizSessionResult)
 async def get_quiz_session(session_id: str):
     """특정 퀴즈 세션 결과 조회"""
     try:
         db = await get_database()
-        
+
         # quiz_sessions 컬렉션에서 세션 조회
         session_doc = await db.quiz_sessions.find_one({"session_id": session_id})
-        
+
         if not session_doc:
             raise HTTPException(status_code=404, detail="퀴즈 세션을 찾을 수 없습니다")
-        
+
         # quiz_submissions 컬렉션에서 상세 답안 조회
         submissions = await db.quiz_submissions.find({"session_id": session_id}).to_list(None)
-        
+
         # 결과 구성
         results = []
         for sub in submissions:
@@ -316,7 +317,7 @@ async def get_quiz_session(session_id: str):
                 is_correct=sub["is_correct"],
                 score=sub["score"]
             ))
-        
+
         return QuizSessionResult(
             session_id=session_doc["session_id"],
             total_questions=session_doc["total_questions"],
@@ -331,12 +332,44 @@ async def get_quiz_session(session_id: str):
             submitted_at=session_doc["submitted_at"],
             grade=session_doc["grade"]
         )
-        
+
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"퀴즈 세션 조회 실패: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ==================== 추가: 세션별 상세 풀이 내역 조회 API ====================
+
+@router.get("/sessions/{session_id}/details")
+async def get_quiz_session_details(session_id: str):
+    """
+    특정 퀴즈 세션의 문제별 상세 풀이 내역 조회 API
+    """
+    try:
+        db = await get_database()
+
+        # quiz_submissions에서 해당 세션의 모든 문제 조회
+        submissions = await db.quiz_submissions.find(
+            {"session_id": session_id}
+        ).sort("question_order", 1).to_list(None)
+
+        if not submissions:
+            raise HTTPException(status_code=404, detail="해당 세션의 문제 풀이 내역이 없습니다")
+
+        # Convert ObjectId to string for serialization
+        for sub in submissions:
+            if "_id" in sub:
+                sub["_id"] = str(sub["_id"])
+
+        return submissions
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"세션 상세 조회 실패: {e}")
+        raise HTTPException(status_code=500, detail="퀴즈 상세 기록을 불러오는 중 오류 발생")
 
 @router.get("/records", response_model=List[QuizRecord])
 async def get_quiz_records(

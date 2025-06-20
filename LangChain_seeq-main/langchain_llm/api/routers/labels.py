@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from pymongo import MongoClient
 import os
 from dotenv import load_dotenv
+import random
 load_dotenv()
 
 router = APIRouter(prefix="/labels", tags=["labels"])
@@ -45,11 +46,11 @@ async def get_topic(document_ids: List[str] = Query(...)):
                 keywords = []
 
             if keywords:
-                all_keywords.append(keywords[0])  # 대표 키워드 1개 수집
+                all_keywords.append(random.choice(keywords))  # 대표 키워드 1개 수집
 
     if not all_keywords:
         return {"topic": None}
 
-    topic = all_keywords[0] if all_keywords else None
+    topic = random.choice(all_keywords)
 
     return {"topic": topic}
