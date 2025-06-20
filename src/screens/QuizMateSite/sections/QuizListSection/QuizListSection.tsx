@@ -8,10 +8,10 @@ import QuizChoiceTrueFalse from "./QuizCard/QuizChoiceTrueFalse";
 import axios from "axios";
 import { useEffect, useState, useCallback } from "react";
 import { useLocation } from "react-router-dom";
-import ScorePopupA from "/Users/kangjaewan/code/seeq_quiz/project/src/components/Popup/ScorePopupA.tsx";
-import QuizLoadingScreen from "/Users/kangjaewan/code/seeq_quiz/project/src/screens/QuizMateSite/sections/QuizListSection/QuizLoadingScreen.tsx";
-import QuizStartScreen from "/Users/kangjaewan/code/seeq_quiz/project/src/screens/QuizMateSite/sections/QuizListSection/QuizStartScreen.tsx";
-import QuizSolveScreen from "/Users/kangjaewan/code/seeq_quiz/project/src/screens/QuizMateSite/sections/QuizListSection/QuizSolveScreen.tsx";
+import ScorePopupA from "../../../../components/Popup/ScorePopupA";
+import QuizLoadingScreen from "./QuizLoadingScreen";
+import QuizStartScreen from "./QuizStartScreen";
+import QuizSolveScreen from "./QuizSolveScreen";
 
 export const QuizListSection = (): JSX.Element => {
   const [loading, setLoading] = useState(true);
