@@ -43,10 +43,21 @@ export const QuizViewSection = (): JSX.Element => {
   const fetchQuizDetails = async (sessionId: string) => {
     try {
       const res = await axios.get(`http://localhost:8000/quiz-qa/sessions/${sessionId}/details`);
-      setQuizDetails(res.data);
+      console.log("✅ 세션 상세 응답 데이터:", res.data); // Debug log
+
+      // Update options field logic as per instruction
+      const updatedData = res.data.map((sub: any) => {
+        const options = sub.options ?? sub.quiz_options ?? sub.quizOptions ?? [];
+        return {
+          ...sub,
+          options: Array.isArray(options) ? options : [],
+        };
+      });
+
+      setQuizDetails(updatedData);
       setShowPopup(true);
     } catch (error) {
-      console.error("퀴즈 세션 상세 내역 조회 실패:", error);
+      console.error("❌ 퀴즈 세션 상세 내역 조회 실패:", error);
     }
   };
 
@@ -87,6 +98,30 @@ export const QuizViewSection = (): JSX.Element => {
         </div>
       </div>
 
+      <div className="flex justify-center pb-2">
+        <button
+          onClick={async () => {
+            setQuizHistoryData([]); // Clear existing data
+            setOffset(0); // Reset offset
+
+            try {
+              setLoading(true);
+              const res = await axios.get("http://localhost:8000/quiz-qa/records", {
+                params: { offset: 0, limit }
+              });
+              setQuizHistoryData(res.data);
+            } catch (error) {
+              console.error("❌ 새로고침 중 오류 발생:", error);
+            } finally {
+              setLoading(false);
+            }
+          }}
+          className="bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold py-1 px-3 rounded"
+        >
+          🔄 새로고침
+        </button>
+      </div>
+
       <CardContent
         className="p-3.5 max-h-[500px] overflow-auto"
         onScroll={(e) => {
@@ -119,7 +154,7 @@ export const QuizViewSection = (): JSX.Element => {
                   문제 수: {quiz.total_questions} / 정답: {quiz.correct_answers} / 오답: {quiz.wrong_answers}
                 </p>
                 <p className="font-normal text-xs text-gray-600 leading-[14.4px] font-['Inter',Helvetica]">
-                  점수: {quiz.total_score}점 ({quiz.percentage}%)
+                  정답률 : ({quiz.percentage}%)
                 </p>
               </div>
             </div>

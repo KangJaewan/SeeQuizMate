@@ -358,10 +358,17 @@ async def get_quiz_session_details(session_id: str):
         if not submissions:
             raise HTTPException(status_code=404, detail="해당 세션의 문제 풀이 내역이 없습니다")
 
-        # Convert ObjectId to string for serialization
+        # Convert ObjectId to string for serialization and ensure 'options' field is included
         for sub in submissions:
             if "_id" in sub:
                 sub["_id"] = str(sub["_id"])
+
+            # Ensure options field is available in response
+            if "options" not in sub:
+                if "quiz_options" in sub:
+                    sub["options"] = sub["quiz_options"]
+                else:
+                    sub["options"] = []
 
         return submissions
 
@@ -545,6 +552,13 @@ async def save_quiz_session(
         # 2. quiz_submissions 컬렉션에 개별 답안 저장
         submission_docs = []
         for i, (result, original) in enumerate(zip(session_result.results, original_answers)):
+            # Ensure quiz_options is present for storage
+            quiz_options = []
+            # Try to get from original.options or original.quiz_options for compatibility
+            if hasattr(original, "options") and original.options is not None:
+                quiz_options = original.options
+            elif hasattr(original, "quiz_options"):
+                quiz_options = getattr(original, "quiz_options", [])
             submission_doc = {
                 "session_id": session_result.session_id,
                 "question_id": result.question_id,
@@ -555,6 +569,7 @@ async def save_quiz_session(
                 "is_correct": result.is_correct,
                 "score": result.score,
                 "options": original.options,
+                "quiz_options": quiz_options,
                 "time_spent": original.time_spent,
                 "question_order": i + 1,
                 "created_at": datetime.now()
@@ -606,6 +621,11 @@ async def save_quiz_session_sync(
         # 2. quiz_submissions 컬렉션에 개별 답안 저장
         submission_docs = []
         for i, (result, original) in enumerate(zip(session_result.results, original_answers)):
+            quiz_options = []
+            if hasattr(original, "options") and original.options is not None:
+                quiz_options = original.options
+            elif hasattr(original, "quiz_options"):
+                quiz_options = getattr(original, "quiz_options", [])
             submission_doc = {
                 "session_id": session_result.session_id,
                 "question_id": result.question_id,
@@ -616,6 +636,7 @@ async def save_quiz_session_sync(
                 "is_correct": result.is_correct,
                 "score": result.score,
                 "options": original.options,
+                "quiz_options": quiz_options,
                 "time_spent": original.time_spent,
                 "question_order": i + 1,
                 "created_at": datetime.now()

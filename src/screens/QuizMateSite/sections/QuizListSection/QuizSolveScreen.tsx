@@ -76,6 +76,8 @@ const QuizSolveScreen: React.FC<QuizSolveScreenProps> = ({
         currentQuiz.quiz_type === "multiple_choice" || currentQuiz.quiz_type === "true_false"
           ? currentQuiz.options?.[currentQuiz.correct_option]
           : currentQuiz.correct_answer ?? "정답 없음",
+      options: currentQuiz.options || [],
+      quiz_options: currentQuiz.options || [],
     };
     const updatedAnswers = [...answers, answerRecord];
     setAnswers(updatedAnswers);

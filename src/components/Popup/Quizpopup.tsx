@@ -9,6 +9,7 @@ interface QuizSubmission {
   is_correct: boolean;
   score: number;
   options?: string[] | null;
+  quiz_options?: string[] | null;
   time_spent?: number | null;
   question_order: number;
   created_at: string;
@@ -28,13 +29,30 @@ const Quizpopup: React.FC<QuizPopupProps> = ({ quizResults, onClose }) => {
           닫기
         </button>
 
-        {quizResults.map((q, index) => (
-          <div key={q.question_id} className="mb-6 border-b pb-4">
+        {quizResults.map((q, index) => {
+          console.log("문제:", q.question_text);
+          console.log("옵션:", q.options);
+          console.log("내 답:", q.user_answer);
+          console.log("정답:", q.correct_answer);
+
+          if (!q.options || (Array.isArray(q.options) && q.options.length === 0)) {
+            console.warn("❌ 옵션이 null이거나 비어 있음:", {
+              question: q.question_text,
+              options: q.options,
+              user_answer: q.user_answer,
+              correct_answer: q.correct_answer,
+            });
+          }
+
+          console.log("🔑 키 확인:", `${q.question_id}-${index}`);
+
+          return (
+            <div key={`${q.question_id}-${index}`} className="mb-6 border-b pb-4">
             <p className="font-semibold mb-1">
               Q{q.question_order}. {q.question_text}
             </p>
             <ul className="mb-2">
-              {q.options?.map((opt, idx) => (
+              {((q.options && q.options.length > 0) ? q.options : (q.quiz_options && q.quiz_options.length > 0 ? q.quiz_options : [])).map((opt, idx) => (
                 <li
                   key={idx}
                   className={`px-2 py-1 rounded ${
@@ -61,7 +79,8 @@ const Quizpopup: React.FC<QuizPopupProps> = ({ quizResults, onClose }) => {
             {q.time_spent && <p className="text-sm">소요 시간: {q.time_spent}초</p>}
             <p className="text-xs text-gray-400 mt-1">제출 시각: {new Date(q.created_at).toLocaleString()}</p>
           </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
